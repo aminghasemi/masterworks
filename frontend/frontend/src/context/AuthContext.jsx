@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import jwtDecode from "jwt-decode";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -66,6 +66,7 @@ export const AuthProvider = ({children}) => {
 
     const contextData = {
         user: user,
+        authTokens: authTokens,
         loginUser:loginUser,
         logOutUser: logOutUser,
     }  

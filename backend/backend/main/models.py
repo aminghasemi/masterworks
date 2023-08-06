@@ -38,20 +38,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    def get_full_name(self):
-        full_name = None
-        if self.first_name or self.last_name:
-            full_name = self.first_name + " " + self.last_name
-        elif self.username:
-            full_name = self.username
-        else:
-            full_name = self.email
-        return full_name
-
-    def __str__(self):
-        full_name = self.first_name + " " + self.last_name
-        return full_name
 
 
 
 
+
+
+class Note(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    body=models.TextField()

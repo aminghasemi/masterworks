@@ -15,7 +15,7 @@ function App() {
           <AuthProvider>
           <Header />
           <Routes>
-            <Route path='/' element={!user ? <Navigate replace to='/login'/> : <HomePage/>}/>
+            <Route path='/' element={<HomePage/>}/>
             <Route path='/login' element={<LoginPage/>}/>
           </Routes>
           </AuthProvider>
