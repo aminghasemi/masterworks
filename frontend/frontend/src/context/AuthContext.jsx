@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom'
 
 
 
-const  AuthContext = createContext();
+const  AuthContext = createContext("");
 export default AuthContext;
 
 
@@ -14,6 +14,7 @@ export const AuthProvider = ({children}) => {
     const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwtDecode(localStorage.getItem('authTokens')) : null)
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(true)
     const loginUser = async(e ) => {
         e.preventDefault()
         const response = await fetch('http://127.0.0.1:8000/api/token/', {
@@ -43,11 +44,42 @@ export const AuthProvider = ({children}) => {
 
         }
     
+
+        const updateToken = async(e ) => {
+            const response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'refresh':authTokens.refresh})
+            })
+            const data = await response.json()
+            if (response.status === 200) {
+                setAuthTokens(data)
+                setUser(jwtDecode(data.access))
+                localStorage.setItem('authTokens', JSON.stringify(data))
+            } else {
+                logOutUser()
+            }
+    
+            }
+
     const contextData = {
         user: user,
         loginUser:loginUser,
         logOutUser: logOutUser,
     }  
+
+    useEffect(() => {
+        let fourMinutes = 1000 * 60 * 4
+        let interval = setInterval(() => {
+            if(authTokens){
+                updateToken()
+            }
+        }, fourMinutes)
+        return () => clearInterval(interval)
+
+    }, [authTokens, loading])
     return (
         <AuthContext.Provider value={contextData}>
             {children}
